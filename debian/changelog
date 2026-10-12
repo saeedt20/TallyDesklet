@@ -1,3 +1,12 @@
+tallydesklet (0.3.0-1) unstable; urgency=medium
+
+  * Redesign the desktop card and native settings with six curated themes.
+  * Add Persian RTL, English LTR, Vazirmatn, compact and section controls.
+  * Add reversible appearance previews, reduced motion and week selection.
+  * Add optional sustained memory/disk notifications without new dependencies.
+
+ -- saeedt20 <132300919+saeedt20@users.noreply.github.com>  Mon, 12 Oct 2026 12:30:00 +0000
+
 tallydesklet (0.2.1-1) unstable; urgency=medium
 
   * Rename the application, package, and command to TallyDesklet.

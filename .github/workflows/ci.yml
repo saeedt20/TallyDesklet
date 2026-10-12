@@ -16,6 +16,8 @@ jobs:
           ./scripts/build-deb.sh
           desktop-file-validate data/tallydesklet.desktop
           ./scripts/gui-check.sh
+          ./scripts/gui-check.sh --composited
+          ./scripts/gui-check.sh --hidpi
           lintian --fail-on error dist/*.deb
           cd dist && sha256sum -c SHA256SUMS
       - name: Conventional Debian build

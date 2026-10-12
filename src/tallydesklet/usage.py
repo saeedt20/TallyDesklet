@@ -52,12 +52,12 @@ class UsageTracker:
             self.days[today.isoformat()] += down + up
             self.revision += 1
 
-    def totals(self, today, notice=None):
-        # Python weekdays start on Monday (0); our calendar week starts Sunday (6).
-        sunday = (today - timedelta(days=(today.weekday() + 1) % 7)).isoformat()
+    def totals(self, today, notice=None, week_start=6):
+        # Python weekdays: Monday=0, Saturday=5, Sunday=6. Buckets are unchanged.
+        first = (today - timedelta(days=(today.weekday() - week_start) % 7)).isoformat()
         day = today.isoformat()
         return UsageTotals(self.days.get(day, 0),
-                           sum(value for key, value in self.days.items() if sunday <= key <= day),
+                           sum(value for key, value in self.days.items() if first <= key <= day),
                            self.started_on, notice)
 
     def document(self):

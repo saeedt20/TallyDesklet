@@ -28,6 +28,7 @@ def main(argv=None):
         from gi.repository import Gdk, Gio, GLib, Gtk
         from .config import ConfigStore, validate
         from .metrics import Collector
+        from .alerts import AlertEngine, Notifier
         from .ui.settings import SettingsDialog
         from .ui.widget import MeterWindow
     except (ImportError, ValueError) as error:
@@ -45,6 +46,8 @@ def main(argv=None):
             self.poll_id = 0
             self.store = ConfigStore()
             self.config = None
+            self.alert_engine = AlertEngine()
+            self.notifier = Notifier(self)
 
         def do_command_line(self, command_line):
             options = parser().parse_args(command_line.get_arguments()[1:])
@@ -75,6 +78,8 @@ def main(argv=None):
                 sample = self.collector.results.get_nowait()
                 if sample.generation == self.collector.generation:
                     self.window.update(sample)
+                    for key, percent in self.alert_engine.evaluate(sample.time,sample,self.config):
+                        self.notifier.send(key,percent)
             except queue.Empty:
                 pass
             return True
@@ -85,12 +90,14 @@ def main(argv=None):
             except OSError as error:
                 self.store.notice = f"Preferences could not be saved: {error}"
                 if self.settings:
-                    self.settings.status.set_text(self.store.notice)
+                    self.settings.set_status(self.store.notice)
 
         def apply_config(self, config):
             checked = validate(config)
             self.store.save(checked)
-            sampling_changed = any(self.config[k] != checked[k] for k in ("sampling", "network", "disk"))
+            sampling_changed = any(self.config[k] != checked[k] for k in ("sampling", "network", "disk", "usage"))
+            if self.config['alerts'] != checked['alerts']:
+                self.alert_engine.reset()
             self.config = checked
             self.window.apply()
             if sampling_changed:
@@ -111,6 +118,9 @@ def main(argv=None):
             self.settings = None
 
         def do_shutdown(self):
+            self.notifier.close()
+            if self.settings:
+                self.settings.destroy()
             if self.poll_id:
                 GLib.source_remove(self.poll_id)
             if self.collector:

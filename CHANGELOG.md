@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0 — 2026-10-12
+
+- Redesign the widget and native settings with six coordinated themes.
+- Add Persian RTL, English LTR, bundled Vazirmatn and independent numeral choice.
+- Add reversible appearance previews, custom accent reset and reduced motion.
+- Add compact layout, per-section visibility and responsive settings navigation.
+- Add Saturday/Sunday/Monday week starts without changing stored daily totals.
+- Add optional sustained RAM/disk notifications, default off.
+- Preserve existing preferences, startup choice, usage and legacy palettes.
+- Expand deterministic logic tests, real notification protocol and native UI checks.
+
+
 ## 0.2.1 — TallyDesklet
 
 - Rename the app, repository, package, and command to TallyDesklet.

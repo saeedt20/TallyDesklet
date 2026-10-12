@@ -56,3 +56,37 @@
 Current action releases were checked when preparing CI:
 [checkout v7.0.1](https://github.com/actions/checkout/releases/tag/v7.0.1) and
 [upload-artifact v7.0.2](https://github.com/actions/upload-artifact/releases/tag/v7.0.2).
+
+## Version 0.3 design
+
+The card is 340 × 430 logical pixels, with a 320 × 342 compact alternative.
+Hidden sections reduce height. A normal first installation uses Ember; upgrading
+retains existing dark/light/custom-color preferences. Six palettes share the
+same geometry and a minimum 4.5:1 solid-background foreground contrast. User
+accent colors are adjusted when necessary for legibility; text opacity is never
+reduced with the background. Unsupported compositing uses the opaque fallback.
+
+CPU is the leading reading. RAM and filesystem occupancy use 36 segmented bars
+with a fractional final segment, so fill remains consistent with the actual
+percentage. Download and upload have labels/arrows and solid/dashed traces on
+one shared scale. The final row holds Today/This week. Charts remain chronological
+LTR while Persian text, section placement and bar fill are RTL.
+
+Settings have native accessible controls, scrolled content/navigation and a fixed
+footer. Persian reverses navigation and aligns labels to the logical start;
+English remains LTR. The sidebar collapses to named icons on narrow logical
+screens. CSD dialogs are clamped to the work area. Theme tiles are small Cairo
+illustrations, explicitly distinct from the real sample-driven card.
+
+Appearance/display drafts preview on the widget without writing preferences.
+Apply validates and saves before adopting the configuration; failed saves keep
+the prior state and draft. Closing asks before discarding edits, removes timers
+and restores saved appearance. Sampling, notification opt-in and autostart never
+change due to a preview. Original outline icons and process-private OFL font
+registration keep branding and dependencies simple.
+
+Gtk.Stack fades last 180 ms; control hover transitions last 150 ms. Reduced
+motion disables these. There are no always-running animation timers or animated
+fake readings. Memory/disk warnings use actual samples, sustained dwell, rearm
+hysteresis and cooldown; notification connection/calls are asynchronous and are
+cancelled on shutdown. Session policy controls whether accepted alerts appear.

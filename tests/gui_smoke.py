@@ -84,11 +84,13 @@ def desktop_checks(window, settings, env, config):
     assert "_NET_WM_WINDOW_TYPE_DESKTOP" in state, state
     assert "_NET_WM_STATE_SKIP_TASKBAR" in state and "_NET_WM_STATE_SKIP_PAGER" in state, state
     assert "_NET_WM_STRUT(CARDINAL)" not in state, state
-    run("xdotool", "windowactivate", "--sync", settings, "key", "alt+t", "alt+a")
+    run("xdotool", "windowactivate", "--sync", settings, "key", "alt+d")
+    time.sleep(.25)  # Allow the native page transition before using its mnemonic.
+    run("xdotool", "key", "--delay", "120", "alt+t", "alt+a")
     time.sleep(.3)
     state = run("xprop", "-id", window, "_NET_WM_STATE")
     assert "_NET_WM_STATE_ABOVE" in state and "_NET_WM_STATE_BELOW" not in state, state
-    run("xdotool", "windowactivate", "--sync", settings, "key", "alt+t", "alt+l", "alt+a")
+    run("xdotool", "windowactivate", "--sync", settings, "key", "--delay", "120", "alt+t", "alt+l", "alt+a")
     time.sleep(.3)
     run("xdotool", "windowactivate", "--sync", settings, "key", "Escape")
     time.sleep(.3)
@@ -98,7 +100,9 @@ def desktop_checks(window, settings, env, config):
     assert geometry(window) == before, f"Locked card moved: before={before}, after={geometry(window)}, config={config.read_text()}"
     subprocess.run(COMMAND + ["--settings"], env=env, check=True, timeout=10)
     settings = await_window("TallyDesklet Settings")
-    run("xdotool", "windowactivate", "--sync", settings, "key", "alt+l", "alt+a")
+    run("xdotool", "windowactivate", "--sync", settings, "key", "alt+d")
+    time.sleep(.25)
+    run("xdotool", "key", "--delay", "120", "alt+l", "alt+a")
     time.sleep(.3)
     run("xdotool", "windowactivate", "--sync", settings, "key", "Escape")
     time.sleep(.3)
@@ -179,7 +183,7 @@ def main():
                     active = run("xprop", "-root", "_NET_ACTIVE_WINDOW")
                     assert hex(int(window)) not in active, "Widget stole focus"
                     screen_scale = int(os.environ.get("GDK_SCALE", "1"))
-                    await_geometry(window, 320*scale*screen_scale, 330*scale*screen_scale)
+                    await_geometry(window, 340*scale*screen_scale, 430*scale*screen_scale)
                     composited = Gdk.Screen.get_default().is_composited()
                     assert composited == (os.environ.get("TALLYDESKLET_COMPOSITOR") == "on"), "Unexpected compositor state"
                     screenshot(window, output / f"{theme}-{scale}x.png")
