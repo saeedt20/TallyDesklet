@@ -1,3 +1,10 @@
+tallydesklet (0.3.1-1) unstable; urgency=medium
+
+  * Replace the CPU logo, System title and Live indicator with TallyDesklet.
+  * Keep the settings gear and align the literal brand for English and Persian.
+
+ -- saeedt20 <132300919+saeedt20@users.noreply.github.com>  Mon, 12 Oct 2026 18:10:00 +0000
+
 tallydesklet (0.3.0-1) unstable; urgency=medium
 
   * Redesign the desktop card and native settings with six curated themes.

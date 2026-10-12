@@ -27,19 +27,6 @@ def text(cr, cfg, value, x, y, size=12, tint="#FFFFFF", bold=False, right=False,
     return layout.get_pixel_size()
 
 
-def chip(cr, x, y, tint):
-    color(cr, tint)
-    cr.set_line_width(1.5)
-    rounded(cr, x+4, y+4, 16, 16, 2)
-    cr.stroke()
-    for offset in (7, 12, 17):
-        for a, b in (((x+offset, y), (x+offset, y+4)), ((x+offset, y+20), (x+offset, y+24)),
-                     ((x, y+offset), (x+4, y+offset)), ((x+20, y+offset), (x+24, y+offset))):
-            cr.move_to(*a)
-            cr.line_to(*b)
-    cr.stroke()
-
-
 def grid(cr, x, y, w, h, tint):
     color(cr, tint, .24)
     cr.set_line_width(.6)
@@ -92,15 +79,9 @@ def draw_card(cr, cfg, sample=None, histories=None, maximum=1000, composited=Fal
         return text(cr, cfg, numerals(cfg,tr(cfg, value)), x, y, size, kwargs.pop("tint", p["text"]), **kwargs)
     def value(v, x, y, size=12, **kwargs):
         return text(cr, cfg, numerals(cfg, v), x, y, size, kwargs.pop("tint", p["text"]), numeric=True, **kwargs)
-    chip(cr, end-24 if is_rtl else pad, 16, p["text"])
-    label("System", end-35 if is_rtl else pad+35, 15, 18, right=is_rtl, bold=True)
-    live = sample is not None and sample.cpu is not None
-    color(cr, p["accent"] if live else p["muted"], 1 if live else .5)
-    dot = 164 if is_rtl else 146
-    cr.arc(dot, 27, 3, 0, 6.2832)
-    cr.fill()
-    label("Live" if live else "Warming up", dot-9 if is_rtl else dot+9, 19, 10,
-          right=is_rtl, width=95, tint=p["accent"] if live else p["muted"])
+    # Keep the brand literal and reserve the opposite edge for the native gear.
+    value("TallyDesklet", end if is_rtl else pad, 15, 18,
+          right=is_rtl, bold=True, width=width-2*pad-38)
     binary = a["units"] == "binary"
     now = sample.time if sample else 0
     cpu, down, up = histories or ((), (), ())
