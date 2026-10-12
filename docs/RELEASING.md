@@ -46,8 +46,8 @@ First ensure main-branch CI passed. An explicitly pushed `v*` tag triggers
 `.github/workflows/release.yml`:
 
 ```sh
-git tag -a v0.3.0 -m "TallyDesklet 0.3.0"
-git push origin v0.3.0
+git tag -a v0.3.1 -m "TallyDesklet 0.3.1"
+git push origin v0.3.1
 ```
 
 The workflow checks the license, public maintainer metadata, and matching
