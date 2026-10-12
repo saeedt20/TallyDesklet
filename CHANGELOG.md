@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.1 — 12 October 2026
+
+- Simplify the widget header to TallyDesklet and the settings gear.
+- Remove the CPU logo, System title and Live dot/text from both languages.
+- Keep the Latin brand left-aligned in English and right-aligned in Persian.
+
+
 ## 0.3.0 — 2026-10-12
 
 - Redesign the widget and native settings with six coordinated themes.

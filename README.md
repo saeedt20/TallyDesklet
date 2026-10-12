@@ -31,6 +31,10 @@ app with equivalent system dependencies, but positioning and stacking depend on
 the window manager. The interface supports **English (LTR)** and **Persian (RTL)** with bundled
 Vazirmatn fonts. Choose the language independently of the numerals in Settings.
 
+## New in 0.3.1
+
+The widget header now shows **TallyDesklet** and the settings gear. The CPU logo, “System” heading and “Live” dot/text are removed in both languages. English aligns the brand on the left; Persian aligns it on the right while keeping its Latin spelling. Metrics, graphs, themes, dimensions and preferences retain their existing behavior.
+
 ## See it in action
 
 The default card measures **340 × 430 logical pixels**.
@@ -81,15 +85,15 @@ captures remain private local artifacts.
 
 ## Install
 
-Download **`tallydesklet_0.3.0-1_all.deb`** and **`SHA256SUMS`** from the
+Download **`tallydesklet_0.3.1-1_all.deb`** and **`SHA256SUMS`** from the
 [latest release](https://github.com/saeedt20/TallyDesklet/releases/latest).
 Run these commands in the download folder:
 
 ```bash
 sha256sum -c SHA256SUMS
-install -m 644 ./tallydesklet_0.3.0-1_all.deb /tmp/tallydesklet_0.3.0-1_all.deb
+install -m 644 ./tallydesklet_0.3.1-1_all.deb /tmp/tallydesklet_0.3.1-1_all.deb
 tallydesklet --quit
-sudo apt install /tmp/tallydesklet_0.3.0-1_all.deb
+sudo apt install /tmp/tallydesklet_0.3.1-1_all.deb
 tallydesklet
 ```
 
@@ -229,7 +233,7 @@ sudo apt install dpkg
 ```
 
 The rootless build runs unit tests and creates
-**`dist/tallydesklet_0.3.0-1_all.deb`** and **`dist/SHA256SUMS`**. Do not run the
+**`dist/tallydesklet_0.3.1-1_all.deb`** and **`dist/SHA256SUMS`**. Do not run the
 build with sudo. TallyDesklet is interpreted Python, so no native compilation is
 needed. GTK and psutil's native libraries remain system dependencies; nothing is
 downloaded by the app at runtime.

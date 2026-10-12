@@ -440,3 +440,7 @@ Continue TallyDesklet; retain the existing sampler, usage migration, CLI and des
   Persian/English geometry, 100%/200% scale, large fonts, bounded windows, timers,
   week rollover and opt-in notifications on an isolated private D-Bus/X display.
   Keep real Mint/hardware/login checks distinct from virtual checks.
+
+## 17. Version 0.3.1 — owner-requested header simplification
+
+Replace the widget's CPU/chip logo, System label and Live/warm-up dot/text with one literal **TallyDesklet** name. Keep the settings gear at the opposite edge. Brand text is LTR internally, left-aligned in English and right-aligned in the Persian layout. Keep existing header height, drag target, metrics, graphs, compact mode and themes.

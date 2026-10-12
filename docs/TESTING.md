@@ -1,5 +1,12 @@
 # Testing TallyDesklet
 
+## 0.3.1 header update — 12 October 2026
+
+- All 72 existing checks passed in an isolated private D-Bus/virtual X11/Xfwm4 session: 58 logic/package checks and 14 native GTK/notification checks.
+- The 14 native checks also passed at 200% display scale. Regenerated and visually reviewed English, Persian and compact widget captures show the literal TallyDesklet heading, no chip logo/live indicator, and the existing gear at the opposite edge. All six theme previews use the shared renderer and fixed synthetic values.
+- Rootless Debian packaging passed with matching application/changelog versions and checksums. Source and installed metrics/configuration code otherwise retain their previous behavior.
+- Native Mint installation, real login/startup, suspend/resume and physical monitor hotplug were not repeated for this header-only update. Hosted CI retains its normal/composited/HiDPI GUI smoke and conventional Debian checks.
+
 ## Publication checks — version 0.2.1
 
 All 44 deterministic unit tests passed during publication preparation. The
