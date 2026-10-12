@@ -28,13 +28,15 @@ and keeps measurements and preferences on your computer.
 
 The intended desktop is **Linux Mint 22.3 Xfce**. Other Linux desktops may run the
 app with equivalent system dependencies, but positioning and stacking depend on
-the window manager. The current application interface is English; this guide is
-also available in [Persian](README.fa.md).
+the window manager. The interface supports **English (LTR)** and **Persian (RTL)** with bundled
+Vazirmatn fonts. Choose the language independently of the numerals in Settings.
 
 ## See it in action
 
-The default card measures **320 × 330 logical pixels**.
+The default card measures **340 × 430 logical pixels**.
 These previews show the **actual GTK interface rendered with fixed example data**.
+Normal layout is 340 × 430 logical pixels; Compact is 320 × 342, and hidden
+sections reduce height. The six themes apply to both the card and Settings.
 They contain no user's desktop, live readings, hardware inventory, or personal paths.
 The running app always collects real measurements.
 
@@ -46,8 +48,14 @@ The running app always collects real measurements.
   </tr>
 </table>
 
+<p><img src="docs/examples/themes.png" alt="Six real synthetic-data native GTK theme previews: Ember, Mint, Ocean, Lilac, Paper, Silver" width="850"></p>
+
+<table><tr><th>Persian RTL widget</th><th>Persian RTL settings</th></tr>
+<tr><td><img src="docs/examples/persian.png" alt="Persian RTL widget with example readings" width="320"></td>
+<td><img src="docs/examples/settings-fa.png" alt="Right sidebar and right-aligned Persian native settings" width="550"></td></tr></table>
+
 <details>
-<summary>Native settings: appearance, sampling, position, and login startup</summary>
+<summary>Native settings: themes, language, sampling, desktop, alerts, and attribution</summary>
 
 <img src="docs/examples/settings.png" alt="Native GTK settings with example configuration" width="460">
 
@@ -60,7 +68,11 @@ captures remain private local artifacts.
 
 - **One compact card:** CPU, RAM, system disk, weekly/daily usage, and separate download/upload rates.
 - **Readable histories:** 60-second CPU and dual network graphs, plus matching memory and disk capacity bars.
-- **Personal appearance:** dark/light themes, background opacity, an opaque fallback, 0.75–2× size, and a custom accent color.
+- **Six complete themes:** Ember, Mint, Ocean, Lilac, Paper and Silver, with palette thumbnails, opacity and a contrast-adjusted custom accent.
+- **Reversible preview:** appearance/display settings preview immediately; Apply saves, Close/Discard restores saved preferences.
+- **Bilingual layout:** English LTR, Persian RTL and independently selectable Auto/Latin/Persian numerals.
+- **Your density:** Compact, per-section visibility, 0.75–2× size, and reduced motion.
+- **Optional warnings:** sustained high memory/disk occupancy, native notifications off by default, 60-second dwell and ten-minute cooldown.
 - **Flexible measurements:** decimal/binary units, 0.5/1/2/5-second sampling, an explicit network interface, and a configurable disk path.
 - **Desktop controls:** header dragging, position lock/reset, optional always-on-top, and all-workspaces placement.
 - **Native interaction:** accessible GTK settings, keyboard shortcuts, and a single application instance.
@@ -69,13 +81,15 @@ captures remain private local artifacts.
 
 ## Install
 
-Download **`tallydesklet_0.2.1-1_all.deb`** and **`SHA256SUMS`** from the
+Download **`tallydesklet_0.3.0-1_all.deb`** and **`SHA256SUMS`** from the
 [latest release](https://github.com/saeedt20/TallyDesklet/releases/latest).
 Run these commands in the download folder:
 
 ```bash
 sha256sum -c SHA256SUMS
-sudo apt install ./tallydesklet_0.2.1-1_all.deb
+install -m 644 ./tallydesklet_0.3.0-1_all.deb /tmp/tallydesklet_0.3.0-1_all.deb
+tallydesklet --quit
+sudo apt install /tmp/tallydesklet_0.3.0-1_all.deb
 tallydesklet
 ```
 
@@ -89,8 +103,8 @@ positioning and stacking controls. The commands here use Debian/Ubuntu-style
 
 ### Everyday use
 
-Drag the unlocked header to move the card. Use the gear or right-click menu for
-Settings, Lock position, Always on top, Reset position, and Quit. A repeat launch
+Drag the unlocked header to move the card. The gear opens Settings. Right-click the card for Settings, Lock position,
+Always on top, Reset position, and Quit. A repeat launch
 opens Settings in the existing instance. Escape closes Settings.
 
 | Command | Action |
@@ -104,6 +118,30 @@ opens Settings in the existing instance. Escape closes Settings.
 Enable or disable **Start at login** in Settings. The option requires the stable
 installed launcher at `/usr/bin/tallydesklet`; it is unavailable in a source-only
 checkout. Autostart state comes from your user-scoped XDG desktop entry.
+
+### New settings in 0.3
+
+- **Appearance:** six theme tiles, opacity/scale sliders, Compact, reduced motion,
+  optional custom accent and Restore theme colors.
+- **Display & language:** English/Persian, Auto/Latin/Persian digits, SI/IEC units,
+  and section visibility. Charts retain chronological left-to-right order.
+- **Monitoring:** sample interval, literal interface ID, filesystem path chooser,
+  and Saturday/Sunday/Monday week start. Changing week start recalculates retained
+  daily buckets without changing their values.
+- **Desktop & startup:** lock, top/below, all workspaces, explicit login startup,
+  and immediate position reset. Narrow screens use named icon navigation.
+- **Alerts:** optional memory/disk notifications, off by default. A reading must
+  remain above its threshold for 60 seconds, with five-point rearm hysteresis and
+  at most one attempt per metric per ten minutes. Missing data/resume gaps reset
+  the sustained window. The program must be running and a session notification
+  service must be available; desktop notification policy controls presentation.
+- **About:** version, GitHub, issue reporting and MIT/OFL attribution.
+
+Appearance and display preview without saving. Sampling, week definition,
+notifications and login startup change only after **Apply**. Close or Escape asks
+before discarding unsaved changes. Existing preferences, usage and startup choice
+survive upgrade; legacy dark/light themes and chosen accent colors are preserved.
+Fresh installs default to Ember. Font registration is process-private.
 
 ### Upgrade from Mint Meter
 
@@ -126,7 +164,7 @@ replaces or removes the old entry only after your explicit choice.
 | System disk | Occupied / total capacity of the filesystem containing the selected path, `/` by default; refreshed every 10 seconds |
 | Download / upload | Byte-counter differences divided by monotonic elapsed time, on one selected interface |
 | Daily usage | Combined received + sent bytes observed while the app runs; resets at local midnight |
-| Weekly usage | Combined usage for the calendar week, starting **Sunday at local midnight** |
+| Weekly usage | Combined usage for the calendar week; **Saturday, Sunday or Monday**, selected in Settings; Sunday preserved on upgrade |
 
 Decimal units use powers of 1000 (`GB`, `MB/s`); binary units use 1024
 (`GiB`, `MiB/s`). Disk capacity is storage occupancy, not disk I/O or a sum of
@@ -191,7 +229,7 @@ sudo apt install dpkg
 ```
 
 The rootless build runs unit tests and creates
-**`dist/tallydesklet_0.2.1-1_all.deb`** and **`dist/SHA256SUMS`**. Do not run the
+**`dist/tallydesklet_0.3.0-1_all.deb`** and **`dist/SHA256SUMS`**. Do not run the
 build with sudo. TallyDesklet is interpreted Python, so no native compilation is
 needed. GTK and psutil's native libraries remain system dependencies; nothing is
 downloaded by the app at runtime.
@@ -227,9 +265,10 @@ sudo apt install xvfb xauth xfwm4 xdotool wmctrl x11-utils
 ./scripts/gui-check.sh --hidpi
 ```
 
-The v0.2.1 validation record includes **44 deterministic unit tests**, isolated
-baseline/composited/HiDPI GUI checks, extracted-package launches, and both
-rootless and conventional Debian builds. Hosted CI uses **Ubuntu 24.04**.
+Version 0.3.0 adds **58 deterministic logic/data tests** and **14 native GTK/notification tests**.
+Hosted CI on **Ubuntu 24.04** runs ordinary, composited and HiDPI Xfwm smoke checks,
+the native tests, rootless packaging, lintian and conventional Debian packaging.
+See [the validation record](docs/TESTING.md) for local scope and remaining hardware checks.
 
 GUI checks use a private D-Bus session, isolated Xvfb display, and temporary XDG
 preferences. Their captures and resource reports are excluded from Git and

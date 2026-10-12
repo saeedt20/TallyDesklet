@@ -78,3 +78,39 @@ GitHub Actions uses an Ubuntu 24.04 hosted runner to run unit tests, build a
 rootless package, exercise isolated GUI checks, validate the desktop entry,
 check package contents with lintian, and run the conventional debhelper build.
 Consult the repository's Actions tab for actual run results.
+
+
+## 0.3.0 redesign verification
+
+Local environment: Ubuntu 24.04, distribution Python 3.12.3, GTK 3.24.41,
+PyGObject 3.48.2, Cairo/Pango and psutil 5.9.8. Distribution libraries were
+extracted into a private runtime; Xvfb/Xfwm, D-Bus and XDG paths were isolated.
+No real user desktop preferences, usage or notifications were used in tests.
+The actual application also passed UI-driven Xfwm top/below, lock/drag/save,
+Show Desktop, workspace and graceful-shutdown checks on the private display.
+
+- 58 deterministic logic/data tests: legacy migration, accounting, SI/IEC,
+  palette contrast, configuration bounds, RTL/numerals, alternate week starts,
+  sustained threshold/reset/rearm/cooldown, package privacy and persistence.
+- 14 native GUI/protocol tests: all palette previews without saving; discard and
+  timer cleanup; actual Apply; Persian RTL/English LTR navigation and text; large
+  font/window bounds at 100%/200%; section minimum; failure-preserved draft;
+  native Notify payload/identity, async opt-out, service failure and shutdown.
+- Actual synthetic-data GTK screenshots reviewed for both languages, all themes
+  and settings pages. These are generated without starting the collector.
+- Rootless Debian staging/build and architecture/dependency/font/license checks.
+- Short actual-application idle observation: 35.03 seconds at one-second sampling,
+  0.631% of one CPU core; RSS 69.54–69.60 MiB. This is a virtual short observation,
+  not a hardware/endurance guarantee; settings/active workloads may use more.
+
+The local managed test bus uses TCP and cannot transport the Unix file descriptors
+used by GApplication's remote command-line forwarding. Hosted CI uses a normal
+private Unix D-Bus session and exercises repeat launch, --settings/--quit/reset,
+Xfwm hints, keyboard controls, drag/lock/restart, Show Desktop and workspaces.
+The existing CI also runs normal, composited and HiDPI checks, lintian and both
+rootless/conventional Debian builds. The publication report identifies their
+actual outcome; this description does not turn an unrun check into a pass.
+
+Still requiring a real Linux Mint 22.3 Xfce machine: actual upgrade/install/remove,
+next-login startup, hardware monitor hotplug, suspend/resume, actual notification
+presentation and sustained resource behavior. Wayland positioning is not claimed.

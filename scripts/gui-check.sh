@@ -15,7 +15,8 @@ if [ "${1:-}" = "--hidpi" ]; then
   shift
 fi
 TEST_CONFIG=$(mktemp -d /tmp/tallydesklet-wm-XXXXXX)
-export XDG_CONFIG_HOME="$TEST_CONFIG"
+export XDG_CONFIG_HOME="$TEST_CONFIG" XDG_STATE_HOME="$TEST_CONFIG/state"
+export TALLYDESKLET_GUI_TESTS=1
 # A private D-Bus session and X display are mandatory; this does not touch the real desktop.
 exec dbus-run-session --config-file="$PROJECT_DIR/tests/session.conf" -- xvfb-run -a -s "-screen 0 $TALLYDESKLET_TEST_SCREEN" sh -c '
   # Virtual displays do not provide a supported hardware GL vblank renderer.
@@ -24,5 +25,7 @@ exec dbus-run-session --config-file="$PROJECT_DIR/tests/session.conf" -- xvfb-ru
   trap "kill $wm 2>/dev/null || true" EXIT
   project=$1
   shift
+  cd "$project"
+  PYTHONPATH="$project/src${PYTHONPATH:+:$PYTHONPATH}" /usr/bin/python3 -m unittest discover -s tests -p test_ui.py -v
   /usr/bin/python3 "$project/tests/gui_smoke.py" "$@"
 ' sh "$PROJECT_DIR" "$@"

@@ -8,11 +8,20 @@ tallydesklet \- compact desktop system monitor
 Shows CPU, RAM, filesystem capacity and throughput on one routed network
 interface. Designed for Xfce on X11. Launching again opens preferences.
 .SH DATA USAGE
-Weekly usage appears left and daily usage right above Network. Totals combine
+Today and This week appear beneath Network, mirrored for Persian RTL. Totals combine
 download and upload on the selected interface while the app runs. Daily totals
-reset at local midnight; weekly totals reset Sunday at local midnight.
+reset at local midnight; weekly totals use the selected Saturday, Sunday or Monday start (Sunday on upgrade).
 Totals persist across normal restarts. Traffic while closed and ambiguous
 reconnect/reset or sampling-gap traffic is excluded. Initial periods may be partial.
+.SH APPEARANCE AND LANGUAGE
+Six themes apply to the card and native preferences. Persian is RTL with
+bundled Vazirmatn; English is LTR. Numerals can be selected independently.
+Appearance changes preview; Apply saves. Close/Discard restores saved appearance.
+Compact mode and section visibility reduce the card footprint.
+.SH WARNINGS
+Native memory/disk notifications are off by default. When enabled, readings must
+remain above their threshold for 60 seconds, with ten-minute cooldown and
+five-percentage-point rearm hysteresis. The app must be running.
 .SH OPTIONS
 .TP
 .B --settings

@@ -29,6 +29,12 @@ def stage(destination):
     modules = destination / "usr/share/tallydesklet/tallydesklet"
     shutil.copytree(ROOT / "src/tallydesklet", modules, dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+    font_source = ROOT / 'data/fonts/vazirmatn'
+    if font_source.is_dir():
+        font_target = destination / 'usr/share/tallydesklet/data/fonts/vazirmatn'
+        font_target.mkdir(parents=True,exist_ok=True)
+        for name in ('Vazirmatn-Regular.ttf','Vazirmatn-SemiBold.ttf','OFL.txt'):
+            shutil.copyfile(font_source / name,font_target / name)
     launcher = destination / "usr/bin/tallydesklet"
     launcher.parent.mkdir(parents=True, exist_ok=True)
     launcher.write_text('#!/usr/bin/python3\nimport sys\nsys.dont_write_bytecode = True\nsys.path.insert(0, "/usr/share/tallydesklet")\n'
@@ -58,7 +64,7 @@ def stage(destination):
     for name in ("BUILD_SPEC.md", "DESIGN.md", "TESTING.md", "RELEASING.md"):
         shutil.copyfile(ROOT / "docs" / name, public_docs / name)
     # These reviewed previews contain fixed example data, never live captures.
-    for name in ("dark.png", "light.png", "settings.png"):
+    for name in ("dark.png", "light.png", "settings.png", "persian.png", "settings-fa.png", "themes.png", "settings-display.png", "settings-desktop.png", "compact.png", "about-fa.png"):
         source = ROOT / "docs/examples" / name
         if source.is_file():
             target = public_docs / "examples" / name

@@ -395,3 +395,48 @@ Consult the installed versions and current primary documentation during implemen
 - [Desktop Application Autostart Specification](https://specifications.freedesktop.org/autostart-spec/latest/)
 
 The product choices, dimensions, defaults, project name, performance targets, and suggested structure above are implementation guidance derived from the conversation. They are not claims that the app already exists or that these targets have already been verified.
+
+## 16. Version 0.3 — owner-approved redesign (12 October 2026)
+
+This section supersedes the earlier visual dimensions and defaults for 0.3.
+Continue TallyDesklet; retain the existing sampler, usage migration, CLI and desktop behavior.
+
+- Reference direction: a quiet charcoal card with warm orange, outline symbols,
+  large CPU reading, 60-second charts, segmented memory/disk bars, separate
+  download/upload, and Today/This week totals at the bottom.
+- Normal geometry: 340 × 430 logical pixels. Compact geometry: 320 × 342.
+  Hidden sections reduce height. Scale 0.75–2 remains independent of display scale.
+- Six curated palettes: Ember (default for fresh installs), Mint, Ocean, Lilac,
+  Paper and Silver. Preserve legacy dark/light palettes and custom color on upgrade.
+  Apply themes to both card and preferences. Keep readable foreground contrast,
+  independently recognizable network lines, and a fixed semantic warning color.
+- Native settings use six scrolled pages: Appearance, Display & language,
+  Monitoring, Desktop & startup, Alerts, About. Sidebar is right in Persian,
+  left in English; narrow displays use accessible icon navigation. Keep footer
+  controls reachable, about/credits text bounded, and dialogs within the work area.
+- English is LTR; Persian is RTL. Bundle original unmodified Vazirmatn Regular
+  and SemiBold with OFL 1.1. Never change the user's system language/font/theme.
+  Numerals are independently Auto/Latin/Persian. Paths and interface identifiers
+  remain literal. Numeric/unit groups and chronological charts retain LTR order.
+- Theme cards have native Cairo illustrative thumbnails, selection ticks and
+  keyboard focus. Appearance/display changes preview without saving. Apply saves;
+  close/discard restores saved appearance. Sampling, startup and notifications
+  change only after Apply. Failed save preserves draft and prior settings.
+- Background opacity/size sliders, optional custom accent/reset, compact mode,
+  per-section switches and reduced motion. At least one section remains visible.
+- Restrained 180 ms page fades and 150 ms hover transitions; reduced-motion mode
+  disables them. No perpetual blinking, animated counters or 60-FPS sample redraws.
+- Saturday, Sunday or Monday week starts. Recalculate existing seven daily buckets;
+  do not change observed totals or count closed-app traffic. Preserve Sunday on upgrade.
+- Optional native desktop warnings for sustained high RAM/root-filesystem occupancy.
+  Default off. Configurable 50–99% thresholds (default 90), 60 seconds sustained,
+  ten-minute per-metric cooldown and five-percentage-point rearm hysteresis.
+  Missing readings/gaps restart the sustained window; program must remain running.
+- About identifies TallyDesklet, installed version, GitHub, issue tracker, MIT
+  author attribution and bundled font license. No external download at runtime.
+- Rootless Debian 0.3.0-1 build includes fonts and reviewed synthetic-data native
+  captures only. No local config, usage, real desktop captures or verification logs.
+- Verify all palettes, migration, preview/apply/discard/failures, literal paths,
+  Persian/English geometry, 100%/200% scale, large fonts, bounded windows, timers,
+  week rollover and opt-in notifications on an isolated private D-Bus/X display.
+  Keep real Mint/hardware/login checks distinct from virtual checks.

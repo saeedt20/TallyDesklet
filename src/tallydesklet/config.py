@@ -10,8 +10,14 @@ import time
 
 DEFAULTS = {
     "schema_version": 1,
-    "appearance": {"theme": "dark", "background_opacity": .9, "scale": 1.0,
-                   "accent_color": "#5FE3AF", "units": "decimal"},
+    "appearance": {"theme": "ember", "background_opacity": .94, "scale": 1.0,
+                   "accent_color": "#FF985C", "custom_accent": False,
+                   "units": "decimal", "compact": False, "reduced_motion": False},
+    "display": {"language": "en", "digits": "auto", "cpu": True, "ram": True,
+                "disk": True, "network": True, "usage": True},
+    "usage": {"week_start": 6},
+    "alerts": {"enabled": False, "ram": True, "disk": True,
+               "ram_percent": 90, "disk_percent": 90},
     "sampling": {"interval_seconds": 1.0, "history_seconds": 60, "disk_interval_seconds": 10},
     "network": {"interface": "auto"}, "disk": {"path": "/"},
     "window": {"monitor": "primary", "anchor": "top-right", "margin": 24,
@@ -40,12 +46,26 @@ def validate(raw):
     a, s, w = result["appearance"], result["sampling"], result["window"]
     for key, low, high in (("background_opacity", .35, 1), ("scale", .75, 2)):
         a[key] = max(low, min(high, a[key])) if math.isfinite(a[key]) else DEFAULTS["appearance"][key]
-    if a["theme"] not in ("dark", "light"):
-        a["theme"] = "dark"
+    if a["theme"] not in ("ember", "mint", "ocean", "lilac", "paper", "silver", "dark", "light"):
+        a["theme"] = DEFAULTS["appearance"]["theme"]
+    old_a = raw.get("appearance", {})
+    if isinstance(old_a, dict) and "accent_color" in old_a and "custom_accent" not in old_a:
+        a["custom_accent"] = True  # Preserve an existing owner's chosen color.
     if a["units"] not in ("decimal", "binary"):
         a["units"] = "decimal"
     if not re.fullmatch(r"#[0-9a-fA-F]{6}", a["accent_color"]):
         a["accent_color"] = DEFAULTS["appearance"]["accent_color"]
+    d = result["display"]
+    if d["language"] not in ("en", "fa"):
+        d["language"] = "en"
+    if d["digits"] not in ("auto", "latin", "persian"):
+        d["digits"] = "auto"
+    if not any(d[k] for k in ("cpu", "ram", "disk", "network", "usage")):
+        d["cpu"] = True
+    if result["usage"]["week_start"] not in (0, 5, 6):
+        result["usage"]["week_start"] = 6
+    for key in ("ram_percent", "disk_percent"):
+        result["alerts"][key] = max(50, min(99, result["alerts"][key]))
     if s["interval_seconds"] not in (.5, 1, 2, 5):
         s["interval_seconds"] = 1.0
     s["history_seconds"], s["disk_interval_seconds"] = 60, 10

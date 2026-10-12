@@ -135,8 +135,8 @@ class ConfigTests(unittest.TestCase):
         config = validate({"appearance": {"scale": 99, "theme": "invalid", "background_opacity": float("nan"), "accent_color": "red"},
                            "sampling": {"interval_seconds": -1}, "window": {"locked": "false", "position": [-1920, 30]}})
         self.assertEqual(config["appearance"]["scale"], 2)
-        self.assertEqual(config["appearance"]["theme"], "dark")
-        self.assertEqual(config["appearance"]["background_opacity"], .9)
+        self.assertEqual(config["appearance"]["theme"], "ember")
+        self.assertEqual(config["appearance"]["background_opacity"], .94)
         self.assertEqual(config["sampling"]["interval_seconds"], 1)
         self.assertFalse(config["window"]["locked"])
         self.assertEqual(config["window"]["position"], [-1920, 30])

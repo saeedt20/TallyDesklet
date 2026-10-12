@@ -20,7 +20,7 @@ class PackagePrivacyTests(unittest.TestCase):
                      "data/icons/tallydesklet.svg", "data/tallydesklet.1",
                      "debian/copyright", "debian/changelog", "README.md", "README.fa.md", "LICENSE"]
             files += [f"docs/{name}" for name in public]
-            examples = ("dark.png", "light.png", "settings.png")
+            examples = ("dark.png", "light.png", "settings.png", "persian.png", "settings-fa.png", "themes.png", "settings-display.png", "settings-desktop.png", "compact.png", "about-fa.png")
             files += [f"docs/examples/{name}" for name in examples]
             private = ["docs/screenshots/live.png", "docs/resource-check.json",
                        "docs/LOCAL_VERIFICATION.md", "docs/unknown-private-file.txt",

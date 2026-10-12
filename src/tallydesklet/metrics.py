@@ -153,7 +153,7 @@ class Collector:
                     if usage.revision != self.usage_saved_revision:
                         self._save_usage(store, usage)
                     usage_saved_at = network_at
-                totals = usage.totals(today, store.notice)
+                totals = usage.totals(today, store.notice, config["usage"]["week_start"])
             else:
                 totals = UsageTotals(None, None, notice=store.notice)
             sample = Sample(now, cpu, ram, disk, rate, interfaces, generation, totals)

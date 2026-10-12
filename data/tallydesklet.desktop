@@ -3,6 +3,7 @@ Version=1.0
 Type=Application
 Name=TallyDesklet
 Comment=Compact desktop CPU, memory, storage and network monitor
+Comment[fa]=پایش پردازنده، رم، دیسک و شبکه روی میزکار
 Exec=tallydesklet
 Icon=tallydesklet
 Terminal=false
@@ -13,12 +14,15 @@ Actions=Settings;Reset;Quit;
 
 [Desktop Action Settings]
 Name=Settings
+Name[fa]=تنظیمات
 Exec=tallydesklet --settings
 
 [Desktop Action Reset]
 Name=Reset Position
+Name[fa]=بازگرداندن موقعیت
 Exec=tallydesklet --reset-position
 
 [Desktop Action Quit]
 Name=Quit
+Name[fa]=خروج
 Exec=tallydesklet --quit

@@ -4,10 +4,14 @@ import cairo
 from gi.repository import Gdk, GLib, Gtk, Pango, PangoCairo
 
 from ..formatting import capacity, quantity
+from ..i18n import numerals, rtl, tr
+from ..fonts import load as load_fonts
+from .render import draw_card
+from .icons import symbol
 from ..history import GraphScale, History
 from ..position import place
 from .graphs import bar, graph
-from .theme import CYAN, HEIGHT, RADIUS, THEMES, WIDTH, color, rounded
+from .theme import geometry, palette
 
 
 class MeterWindow(Gtk.ApplicationWindow):
@@ -15,6 +19,8 @@ class MeterWindow(Gtk.ApplicationWindow):
         super().__init__(application=app, title="TallyDesklet")
         self.app = app
         self.sample = None
+        self.preview_config = None
+        load_fonts()
         self.cpu, self.down, self.up = History(), History(), History()
         self.net_scale = GraphScale()
         self.position_timer = 0
@@ -54,7 +60,7 @@ class MeterWindow(Gtk.ApplicationWindow):
         self.gear.get_style_context().add_class("tallydesklet-gear")
         self.gear.set_tooltip_text("TallyDesklet menu")
         self.gear.get_accessible().set_name("TallyDesklet settings and actions")
-        self.gear.connect("clicked", lambda button: self.show_menu())
+        self.gear.connect("clicked", lambda button: self.app.open_settings())
         self.fixed.put(self.gear, 280, 12)
         self.connect("delete-event", lambda *_: app.quit() or True)
         screen.connect("monitors-changed", lambda *_: self.reposition())
@@ -67,16 +73,17 @@ class MeterWindow(Gtk.ApplicationWindow):
 
     @property
     def config(self):
-        return self.app.config
+        return self.preview_config or self.app.config
 
     def apply(self):
         scale = self.config["appearance"]["scale"]
-        w, h = round(WIDTH * scale), round(HEIGHT * scale)
+        width, height, _ = geometry(self.config)
+        w, h = round(width * scale), round(height * scale)
         self.canvas.set_size_request(w, h)
         self.fixed.set_size_request(w, h)
-        self.fixed.move(self.gear, round(278 * scale), round(11 * scale))
+        self.fixed.move(self.gear, round((14 if rtl(self.config) else width-42) * scale), round(14 * scale))
         self.gear.set_size_request(round(26*scale), round(26*scale))
-        self.gear.get_image().set_pixel_size(round(16*scale))
+        self.gear.set_image(symbol("gear",palette(self.config)["muted"],round(20*scale)))
         self.resize(w, h)
         settings = self.config["window"]
         above = settings["always_on_top"]
@@ -89,8 +96,11 @@ class MeterWindow(Gtk.ApplicationWindow):
         self.stick() if settings["all_workspaces"] else self.unstick()
         self.gear.get_style_context().add_class("tallydesklet-gear")
         fg = Gdk.RGBA()
-        fg.parse(THEMES[self.config["appearance"]["theme"]]["muted"])
+        fg.parse(palette(self.config)["muted"])
         self.gear.override_color(Gtk.StateFlags.NORMAL, fg)
+        self.gear.set_tooltip_text(tr(self.config, "Settings"))
+        self.canvas.get_accessible().set_name(tr(self.config, "System"))
+        self.gear.get_accessible().set_name(tr(self.config, "Settings"))
         self.reposition()
         self.queue_draw()
 
@@ -115,7 +125,7 @@ class MeterWindow(Gtk.ApplicationWindow):
         area = monitor.get_workarea()
         scale = self.config["appearance"]["scale"]
         position = place((area.x, area.y, area.width, area.height),
-                         (round(WIDTH * scale), round(HEIGHT * scale)),
+                         (round(geometry(self.config)[0] * scale), round(geometry(self.config)[1] * scale)),
                          self.config["window"]["position"], self.config["window"]["margin"])
         self.move(*position)
         return False
@@ -123,13 +133,17 @@ class MeterWindow(Gtk.ApplicationWindow):
     def save_position(self):
         self.position_timer = 0
         self.dragging = False
-        self.config["window"]["position"] = list(self.get_position())
+        self.app.config["window"]["position"] = list(self.get_position())
         monitor = self.get_display().get_monitor_at_window(self.get_window())
-        self.config["window"]["monitor"] = self.monitor_key(monitor)
+        self.app.config["window"]["monitor"] = self.monitor_key(monitor)
+        if self.preview_config:
+            self.preview_config["window"].update(self.app.config["window"])
         self.app.save()
         return False
 
     def cleanup(self, *_):
+        if hasattr(self,"menu"):
+            self.menu.destroy()
         if self.position_timer:
             GLib.source_remove(self.position_timer)
             self.position_timer = 0
@@ -138,7 +152,7 @@ class MeterWindow(Gtk.ApplicationWindow):
         if event.button == 3:
             self.show_menu(event)
             return True
-        if event.button == 1 and event.y < 44*self.config["appearance"]["scale"] and not self.config["window"]["locked"]:
+        if event.button == 1 and event.y < 55*self.config["appearance"]["scale"] and not self.config["window"]["locked"]:
             self.dragging = True
             self.drag_origin = (event.x_root, event.y_root, *self.get_position())
             # Xfwm refuses _NET_WM_MOVERESIZE for DESKTOP windows. Keep this a
@@ -165,19 +179,33 @@ class MeterWindow(Gtk.ApplicationWindow):
         return False
 
     def show_menu(self, event=None):
+        if hasattr(self,'menu'):
+            self.menu.destroy()
         menu = Gtk.Menu()
-        settings = Gtk.MenuItem(label="Settings…")
+        menu.get_style_context().add_class('tally-menu')
+        p = palette(self.config)
+        provider = Gtk.CssProvider()
+        provider.load_from_data(f".tally-menu {{background:{p['background']};color:{p['text']};border:1px solid {p['line']};border-radius:10px;padding:6px;}} .tally-menu menuitem {{padding:7px 10px;color:{p['text']};border-radius:6px;}} .tally-menu menuitem:hover {{background:alpha({p['accent']},.18);}} .tally-menu label {{color:{p['text']};}}".encode())
+        Gtk.StyleContext.add_provider_for_screen(self.get_screen(),provider,Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION)
+        menu.connect("destroy",lambda *_:Gtk.StyleContext.remove_provider_for_screen(self.get_screen(),provider))
+        settings = Gtk.MenuItem(label=tr(self.config, "Settings") + "…")
         settings.connect("activate", lambda *_: self.app.open_settings())
         menu.append(settings)
         for key, label in (("locked", "Lock position"), ("always_on_top", "Always on top")):
-            item = Gtk.CheckMenuItem(label=label)
+            item = Gtk.CheckMenuItem(label=tr(self.config, label))
             item.set_active(self.config["window"][key])
             item.connect("toggled", self.toggle, key)
             menu.append(item)
         for label, action in (("Reset position", self.app.reset_position), ("Quit", self.app.quit)):
-            item = Gtk.MenuItem(label=label)
+            item = Gtk.MenuItem(label=tr(self.config, label))
             item.connect("activate", lambda _, fn=action: fn())
             menu.append(item)
+        direction = Gtk.TextDirection.RTL if rtl(self.config) else Gtk.TextDirection.LTR
+        menu.set_direction(direction)
+        for item in menu.get_children():
+            item.set_direction(direction)
+            for child in item.get_children():
+                child.set_direction(direction)
         menu.show_all()
         self.menu = menu
         if event:
@@ -186,8 +214,15 @@ class MeterWindow(Gtk.ApplicationWindow):
             menu.popup_at_widget(self.gear, Gdk.Gravity.SOUTH_EAST, Gdk.Gravity.NORTH_EAST, None)
 
     def toggle(self, item, key):
-        self.config["window"][key] = item.get_active()
-        self.app.apply_config(self.config)
+        import copy
+        config = copy.deepcopy(self.app.config)
+        config["window"][key] = item.get_active()
+        try:
+            self.app.apply_config(config)
+            if self.app.settings:
+                self.app.settings.sync_window_options()
+        except OSError as error:
+            self.app.store.notice = str(error)
 
     def update(self, sample):
         previous = self.sample
@@ -204,106 +239,38 @@ class MeterWindow(Gtk.ApplicationWindow):
         self.canvas.queue_draw()
 
     def summary(self):
+        cfg = self.config
+        t = lambda v: tr(cfg,v)
         if not self.sample:
-            return "Waiting for the first system sample"
+            return t('Waiting for the first system sample')
         s = self.sample
-        binary = self.config["appearance"]["units"] == "binary"
-        lines = [f"CPU: {s.cpu:g}%" if s.cpu is not None else "CPU: warming up / unavailable"]
-        for name, metric in (("RAM", s.ram), ("System disk", s.disk)):
-            lines.append(f"{name}: {capacity(metric.used, metric.total, binary)}; {metric.fraction:.1%} used; "
-                         f"{quantity(metric.available, binary)} available" if metric else f"{name}: Unavailable")
-        lines += [f"Filesystem containing: {self.config['disk']['path']}",
-                  f"Weekly usage: {quantity(s.usage.weekly, binary)}; daily usage: {quantity(s.usage.daily, binary)}",
-                  "Usage combines download + upload on the selected interface while TallyDesklet runs.",
-                  "Daily reset: local midnight. Weekly reset: Sunday, local midnight.",
-                  "Unobserved traffic during closure, reconnects or gaps over 15 seconds is excluded.",
-                  f"Interface: {s.network.interface or self.config['network']['interface']} · {s.network.status}",
-                  f"Download: {quantity(s.network.down, binary, True)}; upload: {quantity(s.network.up, binary, True)}"]
+        binary = cfg['appearance']['units']=='binary'
+        lines = [f"{t('CPU')}: {numerals(cfg,f'{s.cpu:.0f}%')}" if s.cpu is not None else t('Warming up')]
+        for name,metric in (('Memory',s.ram),('System disk',s.disk)):
+            lines.append(f"{t(name)}: {numerals(cfg,capacity(metric.used,metric.total,binary))}; "
+                         f"{t('Available')}: {numerals(cfg,quantity(metric.available,binary))}"
+                         if metric else f"{t(name)}: {t('Unavailable')}")
+        lines += [f"{t('Filesystem containing')}: {cfg['disk']['path']}",
+                  f"{t('Today')}: {numerals(cfg,quantity(s.usage.daily,binary))}; "
+                  f"{t('This week')}: {numerals(cfg,quantity(s.usage.weekly,binary))}",
+                  t('Usage combines download + upload observed while TallyDesklet runs. Closed-app traffic is excluded.'),
+                  t('Daily reset: local midnight. The selected weekday defines the calendar week.'),
+                  f"{t('Week starts on')}: {t({0:'Monday',5:'Saturday',6:'Sunday'}[cfg['usage']['week_start']])}",
+                  f"{t('Interface')}: {s.network.interface or cfg['network']['interface']} · {t(s.network.status)}",
+                  f"{t('Download')}: {numerals(cfg,quantity(s.network.down,binary,True))}; "
+                  f"{t('Upload')}: {numerals(cfg,quantity(s.network.up,binary,True))}"]
         if s.usage.started_on:
-            lines.append(f"Usage tracking started: {s.usage.started_on}; initial periods may be partial.")
+            lines.append(f"{t('Usage tracking started')}: {s.usage.started_on}")
         if s.usage.notice:
             lines.append(s.usage.notice)
-        return "\n".join(lines)
+        return '\n'.join(lines)
 
     def tooltip(self, widget, x, y, keyboard, tooltip):
         tooltip.set_text(self.summary())
         return True
 
     def draw_card(self, widget, cr):
-        appearance = self.config["appearance"]
-        theme = THEMES[appearance["theme"]]
-        accent = appearance["accent_color"]
-        cyan = CYAN
-        if appearance["theme"] == "light":
-            # Preserve the chosen hue while giving thin text/graphs contrast.
-            accent = "#" + "".join(f"{round(int(accent[i:i+2], 16)*.5):02X}" for i in (1, 3, 5))
-            cyan = "#08768B"
-        binary = appearance["units"] == "binary"
-        cr.set_operator(cairo.OPERATOR_SOURCE)
-        cr.set_source_rgba(0, 0, 0, 0)
-        cr.paint()
-        cr.set_operator(cairo.OPERATOR_OVER)
-        cr.scale(appearance["scale"], appearance["scale"])
-        rounded(cr, .5, .5, WIDTH-1, HEIGHT-1, RADIUS)
-        color(cr, theme["background"], appearance["background_opacity"] if self.get_screen().is_composited() else 1)
-        cr.fill_preserve()
-        color(cr, theme["line"], .18)
-        cr.set_line_width(1)
-        cr.stroke()
-
-        def text(value, x, y, size=12, tint=None, bold=False, right=False, width=None):
-            layout = PangoCairo.create_layout(cr)
-            font = Pango.FontDescription("Sans")
-            font.set_absolute_size(size * Pango.SCALE)
-            font.set_weight(Pango.Weight.SEMIBOLD if bold else Pango.Weight.NORMAL)
-            layout.set_font_description(font)
-            layout.set_text(value, -1)
-            if width:
-                layout.set_width(round(width * Pango.SCALE))
-                layout.set_ellipsize(Pango.EllipsizeMode.END)
-                layout.set_alignment(Pango.Alignment.RIGHT if right else Pango.Alignment.LEFT)
-            tw = width if width else layout.get_pixel_size()[0]
-            cr.move_to(x-tw if right else x, y)
-            color(cr, tint or theme["text"])
-            PangoCairo.show_layout(cr, layout)
-
-        text("System", 16, 16, 15, bold=True)
-        color(cr, theme["line"], .16)
-        cr.move_to(16, 45)
-        cr.line_to(304, 45)
-        cr.stroke()
-        s = self.sample
-        now = s.time if s else time.monotonic()
-        text("CPU", 16, 58, tint=theme["muted"])
-        text(f"{s.cpu:.0f}%" if s and s.cpu is not None else "—", 16, 77, 17, bold=True)
-        graph(cr, self.cpu.points, now, 126, 62, 178, 34, 100, accent, True)
-        for label, metric, y in (("RAM", s.ram if s else None, 105),
-                                 ("System disk", s.disk if s else None, 151)):
-            text(label, 16, y, tint=theme["muted"])
-            text(capacity(metric.used, metric.total, binary) if metric else "Unavailable" if s else "—",
-                 304, y, 12, right=True)
-            bar(cr, 16, y+28, 288, metric.fraction if metric else 0, accent, theme["line"])
-        text("Weekly usage", 16, 201, tint=theme["muted"])
-        text("Daily usage", 304, 201, tint=theme["muted"], right=True)
-        text(quantity(s.usage.weekly if s else None, binary), 16, 220, 15, bold=True, width=136)
-        text(quantity(s.usage.daily if s else None, binary), 304, 220, 15, bold=True, right=True, width=136)
-        color(cr, theme["line"], .16)
-        cr.move_to(160, 201)
-        cr.line_to(160, 239)
-        cr.stroke()
-        text("Network", 16, 252, tint=theme["muted"])
-        rate = s.network if s else None
-        if rate and rate.status == "Ready":
-            text("↓ " + quantity(rate.down, binary, True), 16, 273, 14, accent)
-            text("↑ " + quantity(rate.up, binary, True), 304, 273, 14, cyan, right=True)
-        else:
-            text(rate.status if rate else "Warming up", 304, 252, 12, right=True)
-            text("↓ —", 16, 273, 14, accent)
-            text("↑ —", 304, 273, 14, cyan, right=True)
-        color(cr, theme["line"], .13)
-        cr.move_to(16, 317)
-        cr.line_to(304, 317)
-        cr.stroke()
-        graph(cr, self.down.points, now, 16, 301, 288, 16, self.net_scale.value, accent, True)
-        graph(cr, self.up.points, now, 16, 301, 288, 16, self.net_scale.value, cyan)
+        draw_card(cr, self.config, self.sample,
+                  (self.cpu.points, self.down.points, self.up.points), self.net_scale.value,
+                  self.get_screen().is_composited(), self.config["appearance"]["scale"])
         return False

@@ -1,22 +1,15 @@
-# Interface previews
+# Native interface previews
 
-`dark.png`, `light.png`, and `settings.png` capture the actual GTK widgets using
-fixed, illustrative example data. They are not live readings and contain no
-user desktop, hardware inventory, real interface names, or personal paths.
+All PNGs here are captures of the actual TallyDesklet GTK/Cairo implementation
+with **fixed synthetic example readings**, `example0` as an illustrative interface,
+and temporary XDG directories. `scripts/render-examples.py` starts no collector.
+The running application always collects real readings.
 
-Only `scripts/render-examples.py` generates these curated previews. Ordinary
-GUI smoke captures stay under ignored `dist/` and must never be copied here.
-The normal application has no example-data mode.
+`dark.png` is Ember, `light.png` is Paper; Mint/Ocean/Lilac/Silver have named
+captures. `themes.png` combines these six actual captures. `persian.png` shows
+RTL with Vazirmatn, `compact.png` the compact layout, and settings captures show
+English and Persian appearance/display/desktop pages.
 
-To regenerate on an isolated virtual display with temporary preferences:
-
-```sh
-PREVIEW_XDG_DIR=$(mktemp -d)
-XDG_CONFIG_HOME="$PREVIEW_XDG_DIR" XDG_STATE_HOME="$PREVIEW_XDG_DIR" \
-  dbus-run-session --config-file=tests/session.conf -- \
-  xvfb-run -a -s '-screen 0 1280x900x24' \
-  /usr/bin/python3 scripts/render-examples.py
-```
-
-Use distribution GTK, Cairo, Xvfb and xauth dependencies. The renderer fixes the
-GTK theme to Adwaita inside that temporary session. It starts no metric collector.
+Generate only on a private D-Bus/Xvfb session with temporary XDG preferences.
+The package explicitly whitelists reviewed preview filenames. Real desktop/live
+verification captures and resource logs remain ignored private local artifacts.

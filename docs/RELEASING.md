@@ -17,9 +17,9 @@ preview links, and verification limits before tagging.
 ./scripts/gui-check.sh
 ./scripts/gui-check.sh --composited
 ./scripts/gui-check.sh --hidpi
-dpkg-deb --info dist/tallydesklet_0.2.1-1_all.deb
-dpkg-deb --contents dist/tallydesklet_0.2.1-1_all.deb
-lintian dist/tallydesklet_0.2.1-1_all.deb
+dpkg-deb --info dist/tallydesklet_0.3.0-1_all.deb
+dpkg-deb --contents dist/tallydesklet_0.3.0-1_all.deb
+lintian dist/tallydesklet_0.3.0-1_all.deb
 (cd dist && sha256sum -c SHA256SUMS)
 ```
 
@@ -46,8 +46,8 @@ First ensure main-branch CI passed. An explicitly pushed `v*` tag triggers
 `.github/workflows/release.yml`:
 
 ```sh
-git tag -a v0.2.1 -m "TallyDesklet 0.2.1"
-git push origin v0.2.1
+git tag -a v0.3.0 -m "TallyDesklet 0.3.0"
+git push origin v0.3.0
 ```
 
 The workflow checks the license, public maintainer metadata, and matching
@@ -59,3 +59,11 @@ Keep built packages out of Git and attach them as release assets instead.
 Curated previews in `docs/examples/` are rendered with fixed example data and
 may be published. Live GUI captures and private reports under `dist/` remain
 excluded. Package staging copies only the three reviewed example images by name.
+
+
+For 0.3, confirm the 58 logic/data tests and 14 native GUI/notification checks,
+ordinary/composited/HiDPI Xfwm smoke checks, unmodified OFL fonts and reviewed
+synthetic preview captures. Releases created through the GitHub UI are supported:
+the existing tag workflow uploads verified artifacts to an existing release
+instead of failing on a duplicate release. Its contents-write permission remains
+limited to the pre-existing release job. Do not expand repository access.

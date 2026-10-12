@@ -1,54 +1,50 @@
-# TallyDesklet 0.2.1
+# TallyDesklet 0.3.0 — Themes and bilingual redesign
 
-A compact GTK desktop widget for CPU, memory, filesystem capacity, network
-throughput, and daily/weekly data usage. MIT licensed; no telemetry or accounts.
+A redesigned native desktop card and settings for Linux Mint 22.3 Xfce/X11.
 
-This release renames **Mint Meter** to **TallyDesklet**, including the repository,
-application menu entry, package, and command. The `mint-meter` command remains
-available for existing scripts and opt-in login entries.
+- Six complete themes: Ember, Mint, Ocean, Lilac, Paper and Silver.
+- Readable CPU history, segmented RAM/filesystem bars, distinct network traces,
+  and Today/This week totals; normal 340 × 430 or compact 320 × 342 logical pixels.
+- Persian RTL and English LTR, bundled Vazirmatn, independently selectable numerals.
+- Scrolled settings with mirrored sidebar, responsive icon navigation, bounded
+  About/credits, GitHub links and native controls styled to match the card.
+- Reversible appearance preview; Apply saves and Close/Discard restores saved
+  preferences. Sampling, startup and notifications change only after Apply.
+- Per-section visibility, custom accent/reset, restrained fades and reduced motion.
+- Saturday, Sunday or Monday week starts without resetting retained daily totals.
+- Optional sustained RAM/disk notifications, off by default: 60 seconds above
+  threshold, ten-minute cooldown and five-point rearm hysteresis.
+- Upgrade retains old preferences, position, usage and explicit startup choice.
+  Legacy dark/light and custom colors remain supported. Fresh installs use Ember.
 
-<img src="https://raw.githubusercontent.com/saeedt20/tallydesklet/v0.2.1/docs/examples/dark.png" alt="Actual GTK interface rendered with illustrative example data" width="320">
+## Install / upgrade
 
-The preview shows the real GTK interface with fixed example data, not a user's
-live measurements. More previews and instructions are in the
-[README](https://github.com/saeedt20/tallydesklet/blob/v0.2.1/README.md).
-
-## Download and install
-
-Download **tallydesklet_0.2.1-1_all.deb** and **SHA256SUMS** from the assets below,
-then run in that directory:
+Download `tallydesklet_0.3.0-1_all.deb` and `SHA256SUMS`, then run in that folder:
 
 ```sh
 sha256sum -c SHA256SUMS
-sudo apt install ./tallydesklet_0.2.1-1_all.deb
+install -m 644 ./tallydesklet_0.3.0-1_all.deb /tmp/tallydesklet_0.3.0-1_all.deb
+tallydesklet --quit
+sudo apt install /tmp/tallydesklet_0.3.0-1_all.deb
 tallydesklet
 ```
 
-The package declares distribution-provided Python, GTK 3, Cairo, psutil, and
-iproute2 dependencies. It targets Xfce/X11. Installation does not launch the
-app or enable startup at login.
+The readable `/tmp` copy avoids APT's `_apt` notice when your home/download folder
+is private. Do not change home-directory permissions or run the app as root.
 
-If upgrading, quit the old app with `mint-meter --quit` before installation.
-Apt replaces the old package. First launch copies legacy preferences and usage
-only when the new files are absent; original files remain intact. Existing
-TallyDesklet state takes priority. Login startup stays opt-in.
+Open the gear → Display & language to choose Persian. To use the reference's
+orange appearance after upgrading, select **Ember / اخگر** in Appearance.
+Notifications and login startup remain opt-in. Notifications require the app
+running and an available desktop notification service.
 
-## Features
+## Verification scope
 
-- CPU and network histories; memory and disk capacity bars.
-- Weekly and daily combined network usage, preserved across normal restarts.
-- Dark/light themes, opacity, scaling, units, and refresh interval settings.
-- Dragging, position locking, reset, workspaces, and always-on-top controls.
-- Native settings, single-instance CLI, and opt-in login startup.
+58 logic/data tests and 14 native GTK/notification tests cover migration, all
+palettes, contrast, preview/apply/discard, failed saves, week accounting, sustained
+alerts, native notification protocol, RTL/LTR, large fonts and 200% scaling.
+The Ubuntu 24.04 CI pipeline also exercises Xfwm desktop/CLI integration and
+rootless/conventional Debian builds. See `docs/TESTING.md` for the verification
+record and remaining real Mint/login/hardware checks. Documentation images are
+real GTK captures with fixed synthetic example data, never live user readings.
 
-Usage totals count observed traffic while the app runs; they exclude traffic
-while closed and ambiguous reconnect/reset/gap traffic. They are not ISP
-billing totals. Daily reset is local midnight; weekly reset is Sunday midnight.
-
-## Verification and limitations
-
-The release workflow runs unit tests, isolated GUI smoke checks, desktop-entry
-validation, and lintian before publishing. Real login startup, hardware hotplug,
-and actual suspend/resume are not verified by virtual-display checks. Wayland
-may ignore positioning and desktop-stacking hints. A `.deb` alone does not
-establish compatibility with every Debian/Ubuntu release.
+Original application: MIT, saeedt20. Bundled unmodified Vazirmatn: SIL OFL 1.1.
