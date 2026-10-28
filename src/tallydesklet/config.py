@@ -119,7 +119,7 @@ class ConfigStore:
             return validate(raw)
         except FileNotFoundError:
             return validate({})
-        except (ValueError, UnicodeError):
+        except (ValueError, UnicodeError, OverflowError):
             backup = self.path.with_name(f"config.broken-{time.time_ns()}.json")
             self.path.rename(backup)
             self.notice = f"Invalid preferences preserved as {backup.name}; defaults loaded."

@@ -1,7 +1,6 @@
 """Shared palettes, contrast-safe colors and logical geometry; no GTK imports."""
 import copy
-WIDTH, HEIGHT, PADDING, RADIUS = 340, 430, 18, 20
-CYAN = "#70C7D5"
+WIDTH = 340
 PALETTES = {
     "ember": {"name": "Ember", "subtitle": "Charcoal & warm orange", "background": "#191D21", "panel": "#23282E", "text": "#F5F2EE", "muted": "#B9BEC5", "line": "#59616B", "accent": "#FF985C", "secondary": "#D0B199", "light": False},
     "mint": {"name": "Mint", "subtitle": "Quiet mint green", "background": "#17231F", "panel": "#21332B", "text": "#F0F7F3", "muted": "#B4C8BE", "line": "#526D60", "accent": "#73DDB0", "secondary": "#A4CEDB", "light": False},

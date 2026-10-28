@@ -96,8 +96,7 @@ def main(argv=None):
             checked = validate(config)
             self.store.save(checked)
             sampling_changed = any(self.config[k] != checked[k] for k in ("sampling", "network", "disk", "usage"))
-            if self.config['alerts'] != checked['alerts']:
-                self.alert_engine.reset()
+            self.alert_engine.reset(self.config['alerts'], checked['alerts'])
             self.config = checked
             self.window.apply()
             if sampling_changed:

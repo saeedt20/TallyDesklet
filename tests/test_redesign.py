@@ -1,4 +1,5 @@
 """Meaningful migration, contrast, language, accounting and alert behavior."""
+import copy
 from datetime import date
 from types import SimpleNamespace as NS
 import unittest
@@ -131,3 +132,22 @@ class AlertTests(unittest.TestCase):
         self.cfg['alerts']['disk']=False
         for at in range(61):self.assertEqual(self.sample(at),[])
         self.assertEqual(self.sample(61),[('ram',95)])
+
+    def test_setting_change_preserves_all_cooldowns_and_unrelated_episode(self):
+        for at in range(62): self.sample(at)
+        before = copy.deepcopy(self.cfg['alerts'])
+        self.cfg['alerts']['ram_percent'] = 91
+        self.engine.reset(before, self.cfg['alerts'])
+        self.assertTrue(self.engine.states['disk'].latched)
+        for at in range(62,661): self.assertEqual(self.sample(at), [])
+        self.assertEqual(self.sample(661), [('ram',95)])
+
+    def test_setting_change_restarts_only_affected_sustained_window(self):
+        for at in range(51): self.sample(at)
+        before = copy.deepcopy(self.cfg['alerts'])
+        self.cfg['alerts']['ram_percent'] = 91
+        self.engine.reset(before, self.cfg['alerts'])
+        for at in range(51,61): self.assertEqual(self.sample(at), [])
+        self.assertEqual(self.sample(61), [('disk',95)])
+        for at in range(62,111): self.assertEqual(self.sample(at), [])
+        self.assertEqual(self.sample(111), [('ram',95)])

@@ -108,6 +108,25 @@ class NativePreferencesTests(unittest.TestCase):
         self.assertEqual(self.dialog.stack.get_visible_child_name(),'monitoring')
         self.assertIn('existing',self.dialog.status.get_text())
 
+    def test_existing_disk_path_with_trailing_space_is_saved_literally(self):
+        path = Path(self.temp.name) / 'disk '
+        path.mkdir()
+        self.dialog.path.set_text(str(path))
+        self.dialog.respond(self.dialog, Gtk.ResponseType.APPLY)
+        self.assertEqual(self.app.store.load()['disk']['path'], str(path))
+        self.assertFalse(self.dialog.dirty())
+
+    def test_appearance_preview_keeps_current_desktop_position_and_flags(self):
+        window = self.app.window
+        self.app.config['window']['position'] = [100,200]
+        window.apply()
+        self.dialog.choose_theme('ocean'); settle()
+        self.app.config['window'].update(position=None, always_on_top=True, locked=True)
+        window.apply(); settle()
+        self.assertEqual(window.config['appearance']['theme'], 'ocean')
+        self.assertEqual(window.config['window'], self.app.config['window'])
+        self.assertNotEqual(tuple(window.get_position()), (100,200))
+
     def test_failed_save_preserves_config_and_preview(self):
         self.dialog.choose_theme('lilac');settle()
         before=copy.deepcopy(self.app.config)

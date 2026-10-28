@@ -77,6 +77,11 @@ exclude traffic while the app is closed and ambiguous counter resets, reconnects
 or sampling gaps over 15 seconds. Initial periods may be partial. These totals
 represent observed traffic, not an ISP bill or complete historical accounting.
 
+Moving the local date backward preserves recorded days, including across restarts.
+Retention follows the latest recorded date. If the current date falls outside
+that seven-day window, counting pauses with a notice until the date returns to
+the retained window; excluded traffic is not estimated later.
+
 <details>
 <summary>Network selection, VPNs, unavailable readings, and persistence details</summary>
 

@@ -6,7 +6,7 @@ Act as the developer of this project. Build, test, document, and package a worki
 
 Read this entire document before implementing. Inspect the actual development environment and any existing repository instructions. Make reasonable implementation decisions, record them briefly, and proceed through the work. Do not stop at a plan, static mockup, or partial scaffold. Ask questions only when a missing decision genuinely blocks progress. Do not claim that a test, installation, or desktop behavior was verified unless it actually was.
 
-The owner-selected name is **TallyDesklet**, package and command `tallydesklet`, current version `0.2.1`. The earlier name was Mint Meter. Use original artwork and no Apple branding.
+The owner-selected name is **TallyDesklet**, package and command `tallydesklet`, current version `0.3.2`. The earlier name was Mint Meter. Use original artwork and no Apple branding.
 
 On first launch, import legacy `mint-meter` preferences and usage only when the
 new `tallydesklet` file is absent, preserving the original files. Keep the
@@ -83,7 +83,7 @@ Recommended implementation: **Python 3 + GTK 3/PyGObject + Cairo + psutil**. GTK
 - Detect `/etc/os-release`, Python/GTK/psutil versions, session type, display availability, and packaging tools. Report meaningful incompatibilities.
 - Do not silently replace a previously chosen stack in an existing repository. Explain any necessary deviation.
 
-Expected runtime dependencies to verify on the target distribution: `python3`, `python3-gi`, `python3-gi-cairo`, `python3-cairo`, `python3-psutil`, and `gir1.2-gtk-3.0`. Determine the actual Debian package metadata from the implementation rather than copying unverified version constraints.
+Expected runtime dependencies to verify on the target distribution: `python3`, `python3-gi`, `python3-gi-cairo`, `python3-cairo`, `python3-psutil`, `gir1.2-gtk-3.0`, and `librsvg2-common`. Determine the actual Debian package metadata from the implementation rather than copying unverified version constraints.
 
 ## 5. Visual specification
 

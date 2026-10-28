@@ -23,12 +23,12 @@ Target: **Linux Mint 22.3 Xfce on X11**, Python **3.10+**. Other desktops may di
 
 ## Install
 
-Download **[tallydesklet_0.3.1-1_all.deb](https://github.com/saeedt20/TallyDesklet/releases/download/v0.3.1/tallydesklet_0.3.1-1_all.deb)** and [SHA256SUMS](https://github.com/saeedt20/TallyDesklet/releases/download/v0.3.1/SHA256SUMS). In the download folder:
+Download **[tallydesklet_0.3.2-1_all.deb](https://github.com/saeedt20/TallyDesklet/releases/download/v0.3.2/tallydesklet_0.3.2-1_all.deb)** and [SHA256SUMS](https://github.com/saeedt20/TallyDesklet/releases/download/v0.3.2/SHA256SUMS). In the download folder:
 
 ```sh
 sha256sum -c SHA256SUMS
-install -m 644 ./tallydesklet_0.3.1-1_all.deb /tmp/tallydesklet_0.3.1-1_all.deb
-sudo apt install /tmp/tallydesklet_0.3.1-1_all.deb
+install -m 644 ./tallydesklet_0.3.2-1_all.deb /tmp/tallydesklet_0.3.2-1_all.deb
+sudo apt install /tmp/tallydesklet_0.3.2-1_all.deb
 tallydesklet
 ```
 
@@ -78,7 +78,7 @@ The gear opens Settings; right-click offers desktop controls. Login startup requ
 ```sh
 git clone https://github.com/saeedt20/TallyDesklet.git
 cd TallyDesklet
-sudo apt install python3 python3-gi python3-gi-cairo python3-cairo python3-psutil gir1.2-gtk-3.0 iproute2
+sudo apt install python3 python3-gi python3-gi-cairo python3-cairo python3-psutil gir1.2-gtk-3.0 librsvg2-common iproute2
 ./scripts/dev-run.sh
 PYTHONPATH=src /usr/bin/python3 -m unittest discover -s tests -v
 ./scripts/build-deb.sh

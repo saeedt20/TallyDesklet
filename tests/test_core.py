@@ -174,6 +174,19 @@ class ConfigTests(unittest.TestCase):
             self.assertEqual(store.path.read_bytes(), before)
             self.assertEqual(len(list(Path(temp).iterdir())), 1)
 
+    def test_overflowing_numeric_preferences_are_preserved_and_recovered(self):
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'config.json'
+            for group, key in (('appearance', 'scale'), ('appearance', 'background_opacity'),
+                               ('sampling', 'interval_seconds')):
+                with self.subTest(group=group, key=key):
+                    original = json.dumps({group: {key: 10**400}})
+                    path.write_text(original)
+                    store = ConfigStore(path)
+                    self.assertEqual(store.load(), DEFAULTS)
+                    self.assertTrue(store.notice)
+                    self.assertIn(original, [p.read_text() for p in Path(temp).glob('config.broken-*.json')])
+
 
 class PositionTests(unittest.TestCase):
     def test_default_workarea(self):

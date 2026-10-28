@@ -1,3 +1,13 @@
+tallydesklet (0.3.2-1) unstable; urgency=medium
+
+  * Preserve bounded usage history across backward clock and date changes.
+  * Keep desktop controls effective during appearance previews.
+  * Preserve per-metric alert cooldowns and literal filesystem paths.
+  * Recover overflowing preferences and require the SVG image loader.
+  * Ship the user guide and release notes; remove unused renderer imports.
+
+ -- saeedt20 <132300919+saeedt20@users.noreply.github.com>  Wed, 28 Oct 2026 10:30:00 +0000
+
 tallydesklet (0.3.1-1) unstable; urgency=medium
 
   * Replace the CPU logo, System title and Live indicator with TallyDesklet.

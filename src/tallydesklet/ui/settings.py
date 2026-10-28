@@ -399,7 +399,7 @@ class SettingsDialog(Gtk.Dialog):
         d.update({key:w.get_active() for key,w in self.sections.items()})
         c['sampling']['interval_seconds'] = float(self.interval.get_active_id())
         c['network']['interface'] = self.interface.get_active_id()
-        c['disk']['path'] = self.path.get_text().strip()
+        c['disk']['path'] = self.path.get_text()
         c['usage']['week_start'] = int(self.week.get_active_id())
         c['window'].update(locked=self.locked.get_active(),always_on_top=self.above.get_active(),all_workspaces=self.workspaces.get_active())
         c['alerts'].update(enabled=self.alert_enabled.get_active(),ram=self.alert_ram.get_active(),disk=self.alert_disk.get_active(),

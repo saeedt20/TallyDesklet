@@ -97,17 +97,17 @@
 
 ## نصب
 
-فایل‌های **`tallydesklet_0.3.0-1_all.deb`** و **`SHA256SUMS`** را از
-[آخرین انتشار](https://github.com/saeedt20/TallyDesklet/releases/latest)
-دریافت کنید و فرمان‌های زیر را در پوشهٔ فایل‌های دریافت‌شده اجرا کنید:
+فایل‌های **[tallydesklet_0.3.2-1_all.deb](https://github.com/saeedt20/TallyDesklet/releases/download/v0.3.2/tallydesklet_0.3.2-1_all.deb)** و
+**[SHA256SUMS](https://github.com/saeedt20/TallyDesklet/releases/download/v0.3.2/SHA256SUMS)**
+را دریافت کنید و فرمان‌های زیر را در پوشهٔ فایل‌های دریافت‌شده اجرا کنید:
 
 <div dir="ltr">
 
 ```bash
 sha256sum -c SHA256SUMS
-install -m 644 ./tallydesklet_0.3.0-1_all.deb /tmp/tallydesklet_0.3.0-1_all.deb
+install -m 644 ./tallydesklet_0.3.2-1_all.deb /tmp/tallydesklet_0.3.2-1_all.deb
 tallydesklet --quit
-sudo apt install /tmp/tallydesklet_0.3.0-1_all.deb
+sudo apt install /tmp/tallydesklet_0.3.2-1_all.deb
 tallydesklet
 ```
 
@@ -216,7 +216,7 @@ git clone https://github.com/saeedt20/TallyDesklet.git
 cd TallyDesklet
 sudo apt update
 sudo apt install python3 python3-gi python3-gi-cairo python3-cairo \
-  python3-psutil gir1.2-gtk-3.0 iproute2
+  python3-psutil gir1.2-gtk-3.0 librsvg2-common iproute2
 ./scripts/dev-run.sh
 ```
 
@@ -239,7 +239,7 @@ sudo apt install dpkg
 </div>
 
 ساخت بدون دسترسی ریشه، آزمون‌های واحد را اجرا می‌کند و فایل‌های
-**`dist/tallydesklet_0.3.0-1_all.deb`** و **`dist/SHA256SUMS`** را می‌سازد.
+**`dist/tallydesklet_0.3.2-1_all.deb`** و **`dist/SHA256SUMS`** را می‌سازد.
 ساخت را با sudo اجرا نکنید. برنامه با پایتون تفسیرشده اجرا می‌شود و به کامپایل
 بومی نیاز ندارد. کتابخانه‌های بومی GTK و psutil وابستگی‌های سیستم هستند؛
 خود برنامه هنگام اجرا چیزی دریافت نمی‌کند.

@@ -1,5 +1,31 @@
 # Testing TallyDesklet
 
+## 0.3.2 reliability fixes — 28 October 2026
+
+- 64 logic/package tests passed. Default discovery reports one additional skipped
+  GUI module; the 16 native GTK/notification tests passed separately on the private display.
+- Baseline, composited and 200% display-scale GUI runs passed, including CLI
+  forwarding, geometry, settings, window hints, drag/lock/reset, Show Desktop,
+  workspaces and usage/position persistence across process restart.
+- New regressions cover backward dates within/outside the seven-day retention
+  window, saved-history restart, per-metric warning cooldowns/sustained windows,
+  overflowing preference recovery, literal paths and desktop controls during previews.
+- Verification host: Linux Mint 22.3, distribution Python 3.12.3, GTK 3.24.41,
+  PyGObject 3.48.2, Cairo 1.18.0 and psutil 5.9.8. Xvfb 21.1.12 and xdotool
+  3.20160805.1 were extracted under /tmp, with no system-package installation.
+  Every GUI run used scripts/gui-check.sh with private D-Bus, X display and XDG directories.
+- The SVG loader is now an explicit runtime dependency. The public-document
+  allowlist includes USAGE.md and RELEASE_NOTES.md and still excludes private captures.
+- Rootless package build, checksum and file-hash validation, dependency metadata
+  and desktop-entry validation passed. The extracted .deb passed the same baseline
+  CLI/window smoke checks through proot, including saved usage and position across
+  restart, without installing it or changing the real desktop.
+- Actual installation/upgrade/removal, login startup, physical hotplug,
+  suspend/resume and sustained resource behavior were not tested. Conventional
+  debhelper packaging and lintian were not run because those tools are absent.
+  These results describe local verification. Hosted CI and release workflow
+  outcomes are recorded separately in the repository's Actions history.
+
 ## 0.3.1 header update — 12 October 2026
 
 - All 72 existing checks passed in an isolated private D-Bus/virtual X11/Xfwm4 session: 58 logic/package checks and 14 native GTK/notification checks.

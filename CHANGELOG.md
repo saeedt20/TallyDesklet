@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.3.2 — 28 October 2026
+
+- Preserve recorded usage when the local date moves backward, including across restart.
+- Keep Reset position, position locking and Always on top effective during appearance previews.
+- Preserve warning cooldowns when alert settings change; reset only affected sustained readings.
+- Keep filesystem paths literal, including trailing spaces.
+- Preserve and recover preference files containing overflowing numeric values.
+- Require the SVG loader and include the user guide and release notes in Debian packages.
+- Remove unused renderer imports and theme constants.
+
 ## 0.3.1 — 12 October 2026
 
 - Simplify the widget header to TallyDesklet and the settings gear.

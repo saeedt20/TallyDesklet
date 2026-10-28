@@ -61,7 +61,7 @@ def stage(destination):
     # Ship only the public project documentation, never the whole docs tree.
     public_docs = destination / "usr/share/doc/tallydesklet/docs"
     public_docs.mkdir(parents=True, exist_ok=True)
-    for name in ("BUILD_SPEC.md", "DESIGN.md", "TESTING.md", "RELEASING.md"):
+    for name in ("BUILD_SPEC.md", "DESIGN.md", "TESTING.md", "RELEASING.md", "USAGE.md", "RELEASE_NOTES.md"):
         shutil.copyfile(ROOT / "docs" / name, public_docs / name)
     # These reviewed previews contain fixed example data, never live captures.
     for name in ("dark.png", "light.png", "settings.png", "persian.png", "settings-fa.png", "themes.png", "settings-display.png", "settings-desktop.png", "compact.png", "about-fa.png"):

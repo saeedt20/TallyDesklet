@@ -74,8 +74,38 @@ class UsageTests(unittest.TestCase):
         self.assertEqual(len(tracker.days), 7)
         self.assertEqual(min(tracker.days), (THURSDAY + timedelta(days=93)).isoformat())
 
+    def test_clock_rollback_preserves_newer_days_and_seven_bucket_limit(self):
+        days = {(THURSDAY + timedelta(days=i)).isoformat(): i+1 for i in range(7)}
+        latest = THURSDAY + timedelta(days=6)
+        tracker = UsageTracker(latest, days)
+        self.observe(tracker, 1, 100, day=latest)
+        self.observe(tracker, 2, 150, day=latest-timedelta(days=1))
+        self.assertEqual(tracker.days[latest.isoformat()], 7)
+        self.assertEqual(tracker.totals(latest-timedelta(days=1)).daily, 56)
+        self.assertEqual(len(tracker.days), 7)
+
+    def test_rollback_outside_retained_window_pauses_without_erasing_history(self):
+        tracker = UsageTracker(THURSDAY, {THURSDAY.isoformat(): 100})
+        past = THURSDAY - timedelta(days=8)
+        self.observe(tracker, 1, 1000, day=past)
+        self.observe(tracker, 2, 2000, day=past)
+        self.assertEqual(tracker.days, {THURSDAY.isoformat(): 100})
+        self.assertIn('paused', tracker.totals(past).notice)
+        self.observe(tracker, 3, 3000)
+        self.observe(tracker, 4, 3050)
+        self.assertEqual(tracker.totals(THURSDAY).daily, 150)
+        self.assertIsNone(tracker.totals(THURSDAY).notice)
+
 
 class UsageStoreTests(unittest.TestCase):
+    def test_restart_after_clock_rollback_preserves_saved_usage(self):
+        with tempfile.TemporaryDirectory() as temp:
+            store = UsageStore(Path(temp) / 'usage.json')
+            store.save(UsageTracker(THURSDAY, {THURSDAY.isoformat(): 12345}))
+            restored = store.load(THURSDAY-timedelta(days=1))
+            store.save(restored)
+            self.assertEqual(store.load(THURSDAY).totals(THURSDAY).daily, 12345)
+
     def test_xdg_path_atomic_private_restart_and_closed_traffic(self):
         with tempfile.TemporaryDirectory() as temp, patch.dict(os.environ, {"XDG_STATE_HOME": temp}):
             store = UsageStore()

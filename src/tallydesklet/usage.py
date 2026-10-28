@@ -26,17 +26,20 @@ class UsageTracker:
         self._advance(today)
 
     def _advance(self, today):
-        first = (today - timedelta(days=6)).isoformat()
-        last = today.isoformat()
-        days = {key: value for key, value in self.days.items() if first <= key <= last}
-        days.setdefault(last, 0)
+        day = today.isoformat()
+        # Anchor retention to the latest recorded date so clock rollback cannot erase it.
+        latest = max(today, date.fromisoformat(max(self.days, default=day)))
+        first = (latest - timedelta(days=6)).isoformat()
+        days = {key: value for key, value in self.days.items() if first <= key}
+        if first <= day:
+            days.setdefault(day, 0)
         if days != self.days:
             self.days = days
             self.revision += 1
 
     def observe(self, now, today, interface, counters):
         self._advance(today)
-        if interface is None or counters is None:
+        if today.isoformat() not in self.days or interface is None or counters is None:
             self.previous = None
             return
         current = (now, interface, counters.bytes_recv, counters.bytes_sent)
@@ -56,6 +59,8 @@ class UsageTracker:
         # Python weekdays: Monday=0, Saturday=5, Sunday=6. Buckets are unchanged.
         first = (today - timedelta(days=(today.weekday() - week_start) % 7)).isoformat()
         day = today.isoformat()
+        if day not in self.days:
+            notice = notice or "Local date precedes retained usage history; tracking paused."
         return UsageTotals(self.days.get(day, 0),
                            sum(value for key, value in self.days.items() if first <= key <= day),
                            self.started_on, notice)

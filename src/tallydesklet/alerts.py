@@ -15,9 +15,11 @@ class AlertEngine:
         self.states = {name:ThresholdState() for name in ('ram','disk')}
         self.previous = None
 
-    def reset(self):
-        self.states = {name:ThresholdState() for name in ('ram','disk')}
-        self.previous = None
+    def reset(self, before, after):
+        for name, state in self.states.items():
+            if any(before[key] != after[key] for key in ('enabled', name, name+'_percent')):
+                state.above_since = None
+                state.latched = False
 
     def evaluate(self, now, sample, config):
         a = config['alerts']

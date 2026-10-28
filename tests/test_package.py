@@ -15,7 +15,7 @@ class PackagePrivacyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / "source"
             destination = Path(directory) / "package"
-            public = ("BUILD_SPEC.md", "DESIGN.md", "TESTING.md", "RELEASING.md")
+            public = ("BUILD_SPEC.md", "DESIGN.md", "TESTING.md", "RELEASING.md", "USAGE.md", "RELEASE_NOTES.md")
             files = ["src/tallydesklet/__init__.py", "data/tallydesklet.desktop",
                      "data/icons/tallydesklet.svg", "data/tallydesklet.1",
                      "debian/copyright", "debian/changelog", "README.md", "README.fa.md", "LICENSE"]

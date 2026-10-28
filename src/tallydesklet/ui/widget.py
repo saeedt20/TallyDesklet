@@ -1,7 +1,5 @@
 """Compact Cairo card with native GTK interaction and desktop hints."""
-import time
-import cairo
-from gi.repository import Gdk, GLib, Gtk, Pango, PangoCairo
+from gi.repository import Gdk, GLib, Gtk
 
 from ..formatting import capacity, quantity
 from ..i18n import numerals, rtl, tr
@@ -10,7 +8,6 @@ from .render import draw_card
 from .icons import symbol
 from ..history import GraphScale, History
 from ..position import place
-from .graphs import bar, graph
 from .theme import geometry, palette
 
 
@@ -73,7 +70,10 @@ class MeterWindow(Gtk.ApplicationWindow):
 
     @property
     def config(self):
-        return self.preview_config or self.app.config
+        if self.preview_config:
+            return dict(self.app.config, appearance=self.preview_config['appearance'],
+                        display=self.preview_config['display'])
+        return self.app.config
 
     def apply(self):
         scale = self.config["appearance"]["scale"]
@@ -136,8 +136,6 @@ class MeterWindow(Gtk.ApplicationWindow):
         self.app.config["window"]["position"] = list(self.get_position())
         monitor = self.get_display().get_monitor_at_window(self.get_window())
         self.app.config["window"]["monitor"] = self.monitor_key(monitor)
-        if self.preview_config:
-            self.preview_config["window"].update(self.app.config["window"])
         self.app.save()
         return False
 
